@@ -1,87 +1,106 @@
 SOC Analyst Labs & Investigations
 
-This repository documents my hands-on learning journey as a Junior SOC / Blue Team Analyst in training, with a strong focus on understanding how real-world security operations work in practice.
+ Overview
 
-Rather than concentrating on tool memorization or certification checklists, this repository emphasizes how a SOC analyst thinks, investigates, and makes decisions under uncertainty. Each lab is approached as a realistic security incident, following structured investigation and documentation practices similar to those used in professional Security Operations Centers.
+This repository documents my hands-on learning journey as a **Junior SOC / Blue Team Analyst in training**, with a strong emphasis on understanding how **real-world Security Operations Centers (SOCs)** function in practice.
 
+Rather than focusing on tool memorization, surface-level walkthroughs, or certification checklists, this repository is designed to demonstrate **how a SOC analyst thinks, investigates, and makes decisions under uncertainty**. Each lab is treated as a realistic security incident and approached using structured investigation and documentation methods aligned with professional SOC workflows.
 
-
-🔍 Core Focus Areas
-
-The primary goals of this repository are to build and demonstrate skills in:
-
-Alert triage and prioritization
-
-Network and endpoint forensics
-
-Log and traffic analysis
-
-Incident investigation workflows
-
-Evidence-based decision-making
-
-Clear and structured incident documentation
-
-Each investigation is documented step by step to show reasoning, context, and conclusions, not just final answers.
+The goal is to showcase analytical reasoning, investigative depth, and defensive mindset—skills that matter in real security operations.
 
 
 
-📂 What You’ll Find in This Repository
+ Core Focus Areas
 
-This repository contains SOC-style investigations derived from realistic lab scenarios, including:
+The primary objectives of this repository are to build and demonstrate proficiency in the following areas:
 
-Network-based investigations using PCAP files
+* **Alert triage and prioritization** — determining what matters and why
+* **Network and endpoint forensics** — understanding attacker behavior through evidence
+* **Log and traffic analysis** — extracting insight from noisy or incomplete data
+* **Incident investigation workflows** — following structured, repeatable processes
+* **Evidence-based decision-making** — validating assumptions before escalating
+* **Clear, structured incident documentation** — communicating findings effectively
 
-Web server compromise and attack chain analysis
-
-Endpoint-focused investigations and suspicious process analysis
-
-Indicators of Compromise (IOCs) extracted from investigations
-
-Detection gaps, lessons learned, and defensive recommendations
-
-Where appropriate, timelines and summaries are included to reflect how incidents are handled in real SOC environments.
+Each investigation is documented step by step to highlight **context, reasoning, and conclusions**, not just final answers.
 
 
 
-🧠 Skills Practiced and Developed
+What You’ll Find in This Repository
 
-Through these labs, I actively practice and improve skills such as:
+This repository contains SOC-style investigations derived from realistic lab scenarios and simulated incidents, including:
 
-Network traffic analysis using Wireshark
+* **Network-based investigations** using PCAP files
+* **Web server compromise analysis**, including attack chains and exploitation techniques
+* **Endpoint-focused investigations**, such as suspicious process execution and persistence analysis
+* **Indicators of Compromise (IOCs)** extracted from investigations
+* **Detection gaps, lessons learned, and defensive recommendations**
 
-Identifying malicious patterns in HTTP and TCP traffic
+Where applicable, investigations also include:
 
-Investigating reverse shell and command-and-control activity
-
-Analyzing attacker behavior and attack progression
-
-Documenting findings in a clear, structured, and SOC-friendly format
-
-Translating technical findings into defensive insights
-
-
-
-🧪 Lab Platforms & Learning Sources
-
-Hands-on exercises and scenarios are drawn from:
-
-CyberDefenders
-
-Blue Team Labs
-
-These platforms are used to simulate real-world SOC incidents and reinforce practical investigation skills.
+* Incident timelines
+* Summary reports
+* Analyst notes reflecting real SOC documentation standards
 
 
 
-🛡️ Purpose of This Repository
+ Skills Practiced and Developed
 
-The purpose of this repository is to demonstrate practical SOC thinking and investigative ability, not just exposure to tools. Each lab reflects how an analyst would approach an alert: validating activity, gathering evidence, determining impact, and identifying remediation steps.
+Through continuous hands-on investigation, this repository reflects active development of skills such as:
 
-This repository also serves as a personal knowledge base and portfolio as I prepare for SOC Level 1 roles and cybersecurity internships, particularly in remote and entry-level environments.
+* Network traffic analysis using **Wireshark**
+* Identifying malicious patterns in **HTTP, TCP, and DNS traffic**
+* Detecting and investigating **reverse shells and command-and-control activity**
+* Understanding attacker techniques and progression across the kill chain
+* Correlating multiple data sources to validate malicious activity
+* Writing **SOC-friendly documentation** that is clear, concise, and actionable
+* Translating technical findings into **defensive insights and remediation guidance**
 
 
 
-📈 Continuous Improvement
+ Lab Platforms and Learning Sources
 
-This repository will continue to grow as new labs are completed and existing investigations are refined. Older labs may be revisited and improved as my understanding deepens, reflecting continuous learning and skill development.
+Hands-on exercises and scenarios are primarily drawn from the following platforms:
+
+* CyberDefenders
+* Blue Team Labs Online
+
+These platforms are used to simulate real-world SOC incidents and reinforce practical, investigation-driven learning rather than passive content consumption.
+
+
+
+ Purpose of This Repository
+
+The purpose of this repository is to serve as both:
+
+* A **practical learning journal**, and
+* A **portfolio demonstrating SOC analyst readiness**
+
+Each lab reflects how an analyst would handle an alert in a real SOC environment:
+
+1. Validate whether the activity is benign or malicious
+2. Gather and analyze supporting evidence
+3. Determine scope and potential impact
+4. Identify attacker techniques and objectives
+5. Recommend containment, remediation, and detection improvements
+
+This repository is intended to support applications for **SOC Level 1 roles, blue team internships, and entry-level cybersecurity positions**, with a particular interest in **remote and globally distributed security teams**.
+
+
+
+Continuous Improvement and Growth
+
+This repository is a living project and will continue to evolve over time. As my technical understanding deepens:
+
+* New investigations will be added
+* Existing labs may be revisited and improved
+* Documentation quality and analytical depth will increase
+
+This reflects the reality of cybersecurity work: **continuous learning, refinement, and adaptation**.
+
+
+
+ Disclaimer
+
+All investigations documented in this repository are conducted in **controlled lab environments** for educational and defensive purposes only. No real-world systems or organizations were harmed in the creation of this content.
+
+
