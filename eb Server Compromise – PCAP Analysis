@@ -1,0 +1,81 @@
+# Web Server Compromise – PCAP Analysis
+
+## Summary
+A forensic investigation of a compromised web server revealed a malicious web shell upload, reverse shell execution, and attempted data exfiltration.
+
+## Attack Chain
+- Initial access via insecure file upload
+- Web shell deployment
+- Reverse shell connection
+- Attempted exfiltration of sensitive data
+
+## Outcome
+The attacker gained temporary remote access and attempted to exfiltrate system files.
+
+
+
+# Web Server Compromise – PCAP Analysis
+
+## Summary
+A forensic investigation of a compromised web server revealed a malicious web shell upload, reverse shell execution, and attempted data exfiltration.
+
+## Attack Chain
+- Initial access via insecure file upload
+- Web shell deployment
+- Reverse shell connection
+- Attempted exfiltration of sensitive data
+
+## Outcome
+The attacker gained temporary remote access and attempted to exfiltrate system files.
+
+
+
+🔍 investigation-notes.md (THIS IS YOUR MAIN WRITE-UP)
+
+👉 This is where you paste the full detailed analysis you already wrote (the polished version I gave you).
+
+Use headers:
+
+Attacker origin
+
+User-Agent
+
+Web shell upload
+
+Reverse shell
+
+Exfiltration attempt
+
+
+
+
+iocs.md
+# Indicators of Compromise (IOCs)
+
+## IP Addresses
+- 117.11.88.124 (Attacker)
+
+## Files
+- image.jpg.php
+
+## Directories
+- /reviews/uploads/
+
+## Network
+- Reverse shell port: 8080
+
+
+
+detection-gaps.md
+# Detection Gaps & Recommendations
+
+## Observed Gaps
+- Weak file upload validation
+- Executable files allowed in upload directory
+- No alerting on outbound reverse shell traffic
+
+## Recommendations
+- Enforce strict MIME and extension validation
+- Disable execution in upload directories
+- Monitor outbound connections on non-standard ports
+
