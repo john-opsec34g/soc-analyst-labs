@@ -1,0 +1,225 @@
+Poisoned Credentials — LLMNR & NBT-NS Poisoning Investigation
+Lab Overview
+
+This lab investigates a simulated credential poisoning attack leveraging weaknesses in Link-Local Multicast Name Resolution (LLMNR) and NetBIOS Name Service (NBT-NS). These legacy name resolution protocols rely on broadcast queries and lack authentication, making them attractive targets for attackers performing man-in-the-middle (MITM) attacks.
+
+The objective of this investigation is to:
+
+Identify malicious name resolution poisoning
+
+Determine the rogue host responsible
+
+Identify affected victim machines
+
+Extract compromised credentials
+
+Identify systems accessed via SMB authentication
+
+All analysis was performed using Wireshark and packet-level inspection.
+
+Background: LLMNR & NBT-NS Poisoning
+LLMNR (Link-Local Multicast Name Resolution)
+
+Used when DNS resolution fails
+
+Broadcast-based
+
+No authentication
+
+Easily spoofed by attackers
+
+NBT-NS (NetBIOS Name Service)
+
+Legacy Windows name resolution protocol
+
+Broadcast-based
+
+No authentication
+
+Frequently abused in internal network attacks
+
+Attack Technique
+
+When a host fails to resolve a hostname via DNS, it broadcasts a query using LLMNR or NBT-NS.
+An attacker listening on the network can respond with a spoofed reply, causing the victim to:
+
+Trust the attacker’s IP
+
+Initiate SMB authentication
+
+Leak NTLM credentials (hashes)
+
+Investigation Summary
+Item	Value
+Attack Type	LLMNR / NBT-NS Poisoning
+Primary Tool	Wireshark
+Compromised Protocol	SMB (NTLM Authentication)
+Outcome	Credential interception
+Question 1: Identify the Mistyped Query
+
+Question:
+What was the mistyped query sent by the machine with IP address 192.168.232.162?
+
+Analysis
+
+The victim machine failed to resolve a hostname and issued a broadcast NetBIOS Name Service (NBNS) request.
+
+Source IP: 192.168.232.162
+
+Destination IP: 192.168.235.255 (broadcast)
+
+Protocol: NBNS
+
+Finding
+
+The mistyped hostname observed in the NBNS request was:
+
+FILESHAARE<20>
+
+
+This typo triggered a broadcast name resolution request, which opened the door for a malicious spoofed response.
+
+Conclusion
+
+The incorrect hostname FILESHAARE caused the system to fall back to NBNS, enabling the poisoning attack.
+
+Question 2: Identify the Rogue Machine
+
+Question:
+What is the IP address of the rogue machine responding maliciously?
+
+Analysis
+
+A suspicious NBNS response was observed replying to the mistyped query.
+
+Packet ID: 51
+
+Response Protocol: NBNS
+
+Source IP: 192.168.232.215
+
+This host falsely claimed ownership of the mistyped hostname.
+
+Finding
+Rogue Machine IP: 192.168.232.215
+
+Conclusion
+
+The machine at 192.168.232.215 is acting as the rogue responder, performing NBNS poisoning by spoofing legitimate name resolution responses.
+
+Question 3: Identify Additional Affected Machines
+
+Question:
+What is the IP address of the second machine that received poisoned responses?
+
+Analysis
+
+A Wireshark filter was applied:
+
+nbns.addr == 192.168.232.215
+
+
+This isolated all NBNS traffic involving the rogue host.
+
+Finding
+
+Another victim machine that received poisoned responses was identified:
+
+Second Affected Machine IP: 192.168.232.176
+
+Conclusion
+
+At least two internal machines were affected by the poisoning attack, confirming broader network exposure.
+
+Question 4: Identify the Compromised Username
+
+Question:
+What username was compromised during the attack?
+
+Analysis
+
+Traffic destined to the rogue machine was isolated:
+
+ip.dst == 192.168.232.215
+
+
+SMB traffic revealed NTLM authentication attempts initiated by victim systems.
+
+Key observations:
+
+Protocol: SMB2
+
+NTLM authentication in progress
+
+Status: STATUS_MORE_PROCESSING_REQUIRED
+
+Within the NTLMSSP payload, the username was extracted.
+
+Finding
+Compromised Username: janesmith
+Domain: cybercactus.local
+Host: WORKSTATION
+
+Conclusion
+
+The attacker successfully intercepted NTLM authentication data for the user janesmith, confirming credential exposure.
+
+Question 5: Identify the Host Accessed via SMB
+
+Question:
+What hostname did the attacker access using SMB?
+
+Analysis
+
+SMB2 session setup packets were analyzed using the filter:
+
+ip.dst == 192.168.232.215 && smb2
+
+
+The NTLMSSP challenge message revealed system metadata.
+
+Finding
+Target Hostname: AccountingPC.cybercactus.local
+
+Conclusion
+
+The attacker attempted SMB authentication against AccountingPC, confirming lateral access attempts following credential interception.
+
+Indicators of Compromise (IOCs)
+Type	Value
+Rogue IP	192.168.232.215
+Victim IPs	192.168.232.162, 192.168.232.176
+Compromised User	janesmith
+Target Host	AccountingPC
+Protocols Abused	LLMNR, NBT-NS, SMB
+Defensive Recommendations
+
+Disable LLMNR and NBT-NS via Group Policy
+
+Enforce DNS-only name resolution
+
+Monitor for abnormal NBNS responses
+
+Detect unauthorized SMB authentication attempts
+
+Apply network segmentation to reduce lateral movement
+
+Enable SMB signing where possible
+
+Key Takeaways (SOC Perspective)
+
+Small user errors (typos) can lead to serious compromise
+
+Broadcast-based protocols are high-risk
+
+NTLM authentication is frequently abused internally
+
+Packet-level visibility is critical in internal investigations
+
+Tools Used
+
+Wireshark
+
+Analyst Notes
+
+This lab reinforced how credential theft often begins with normal-looking traffic. The attacker did not exploit software vulnerabilities but instead abused protocol design weaknesses and user behavior.
