@@ -1,0 +1,149 @@
+🧪 Memory Forensics Lab – Amadey Trojan Analysis
+📌 Overview
+
+This lab documents a memory forensics investigation performed on a compromised Windows endpoint.
+The goal was to identify malicious activity, determine persistence mechanisms, and understand attacker behavior using memory artifacts rather than relying solely on alerts.
+
+🎯 Objectives
+
+Analyze a Windows memory image for suspicious processes
+
+Identify malware execution techniques
+
+Detect command-and-control (C2) activity
+
+Understand persistence mechanisms
+
+Practice analyst-level reasoning, not just tool usage
+
+🖥️ Lab Environment
+
+Operating System: Windows 7 x64
+
+Artifact Provided: Memory dump (.raw)
+
+Analysis Tool: Volatility 3
+
+Analysis Type: Post-compromise memory investigation
+
+🚨 Incident Context
+
+An endpoint generated an after-hours EDR alert indicating suspicious network activity.
+Initial inspection did not reveal obvious malware on disk, prompting a memory-based investigation.
+
+🔍 Investigation Process
+1️⃣ Process Enumeration
+
+Command used:
+
+vol -f memory.raw windows.pstree
+
+
+Findings:
+
+Identified a suspicious process named lssass.exe
+
+The legitimate Windows process should be lsass.exe
+
+Executed from a Temp directory, not System32
+
+Parent-child relationship appeared abnormal
+
+📌 Red Flag: Malware often mimics legitimate process names with slight spelling changes.
+
+2️⃣ Command-Line Analysis
+
+Command used:
+
+vol -f memory.raw windows.cmdline
+
+
+Findings:
+
+lssass.exe spawned rundll32.exe
+
+DLLs were executed directly from non-standard directories
+
+📌 Insight: Abuse of rundll32.exe is a common living-off-the-land technique.
+
+3️⃣ Network Connections
+
+Command used:
+
+vol -f memory.raw windows.netscan
+
+
+Findings:
+
+Outbound HTTP connections to an external IP address
+
+Communication occurred shortly after process execution
+
+No corresponding legitimate application activity
+
+📌 Conclusion: Likely Command-and-Control (C2) traffic.
+
+4️⃣ Malware Payload Analysis
+
+Memory artifacts revealed multiple malicious DLL modules:
+
+Module Name	Function
+cred64.dll	Credential theft
+clip64.dll	Clipboard monitoring
+
+These modules indicate data exfiltration and surveillance behavior.
+
+5️⃣ Persistence Mechanism
+
+Command used:
+
+vol -f memory.raw windows.scheduledtasks
+
+
+Findings:
+
+Malware created a Scheduled Task for persistence
+
+Ensured execution after reboot
+
+Task name designed to look legitimate
+
+📌 Persistence via scheduled tasks is common in modern malware.
+
+🧬 Malware Identification
+
+Based on behavioral indicators and module structure, the malware was identified as:
+
+Amadey Trojan Stealer (APT-C-36)
+
+Characteristics:
+
+Modular payload delivery
+
+Credential harvesting
+
+Clipboard monitoring
+
+C2 communication via HTTP
+
+Masquerading as legitimate Windows processes
+
+🛠️ Tools Used
+
+Volatility 3
+
+Windows memory artifact analysis
+
+Process tree correlation
+
+Network artifact inspection
+
+🧠 Key Takeaways
+
+Malware does not always appear malicious at first glance
+
+Small inconsistencies (process names, paths) matter
+
+Memory forensics reveals threats invisible to disk analysis
+
+Understanding behavior is more important than memorizing tools
