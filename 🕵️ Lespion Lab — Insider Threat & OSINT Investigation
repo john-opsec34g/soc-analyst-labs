@@ -1,0 +1,187 @@
+🕵️ Lespion Lab — Insider Threat & OSINT Investigation
+
+Category: Insider Threat | OSINT | Credential Exposure | Cryptojacking
+Role: SOC Analyst
+Difficulty: Intermediate
+
+📌 Executive Summary
+
+In this lab, I investigated a simulated insider-threat incident where a single user account was suspected of causing significant disruption within an organization. Initial indicators suggested misuse of company resources and potential credential exposure through public code repositories.
+
+The objective of this investigation was to:
+
+Identify exposed credentials and sensitive data
+
+Trace the insider’s digital footprint
+
+Analyze malicious tooling used
+
+Correlate OSINT findings to assess risk and intent
+
+The investigation leveraged OSINT techniques, GitHub repository analysis, and artifact inspection to reconstruct the attacker’s actions and assess the impact.
+
+🎯 Investigation Objectives
+
+Identify exposed API keys and credentials
+
+Determine misuse of public repositories
+
+Detect cryptomining activity
+
+Correlate online accounts using OSINT
+
+Attribute actions to a single insider account
+
+🧰 Tools & Techniques Used
+
+GitHub repository analysis
+
+Commit history review
+
+Base64 decoding
+
+OSINT investigation
+
+Sherlock (username enumeration)
+
+Google Image Reverse Search
+
+Metadata and artifact analysis
+
+🔍 Investigation Walkthrough
+Q1: What API key did the insider expose on GitHub?
+
+Finding:
+During analysis of the GitHub profile EMarseille99, a public repository named:
+
+Project-Build---Custom-Login-Page
+
+
+was reviewed. Examination of the commit history revealed that the file Login Page.js contained a hardcoded API key:
+
+aJFRaLHjMXvYZgLPwiJkroYLGRkNBW
+
+
+Security Impact:
+Hardcoding API keys in public repositories exposes backend services to unauthorized access and is a critical security failure.
+
+Q2: What plaintext password was exposed?
+
+Within the same repository, the login logic contained a Base64-encoded password:
+
+UGljYXNzb0JhZ3VldHRlOTk=
+
+
+After decoding, the plaintext password was identified as:
+
+PicassoBaguette99
+
+
+Security Impact:
+
+Base64 encoding ≠ encryption
+
+Indicates poor security hygiene
+
+High likelihood of password reuse across systems
+
+Immediate remediation would require password rotation and access review.
+
+Q3: What cryptocurrency mining tool was used?
+
+The insider’s GitHub profile contained a fork of XMRig.
+
+Tool Identified:
+
+XMRig (Monero Miner)
+
+
+Risk Assessment:
+XMRig is commonly abused in cryptojacking attacks to covertly mine Monero using victim resources. Its presence strongly suggests unauthorized resource exploitation.
+
+Q4: What gaming platform account did the insider have?
+
+Using Sherlock OSINT, the username EMarseille99 was queried across multiple platforms.
+
+Confirmed Account:
+
+Steam Community
+
+https://steamcommunity.com/id/EMarseille99/
+
+
+This account may serve as an OSINT pivot for social connections or behavioral correlation.
+
+Q5: What is the insider’s Instagram profile?
+
+Identified via Sherlock output:
+
+https://www.instagram.com/EMarseille99/
+
+Q6: Where did the insider travel for holiday?
+
+Instagram activity indicated recent travel to:
+
+Singapore
+
+Q7: Where does the insider’s family live?
+
+Multiple uploaded images geotagged to:
+
+Dubai
+
+Q8: Where is the company office located?
+
+Using reverse image search on office.jpg, the building was identified as being located in:
+
+Birmingham
+
+Q9: In which U.S. state was the IP camera located?
+
+Reverse image search on Webcam.png showed landmarks associated with:
+
+Indiana
+
+🧠 Key Findings
+
+Insider exposed API keys and passwords in public repositories
+
+Poor credential handling and insecure coding practices
+
+Evidence of cryptocurrency mining activity
+
+Extensive online footprint discoverable via OSINT
+
+Insider risk amplified by lack of repository monitoring
+
+🛡️ Defensive Recommendations
+
+Enforce secret scanning on all repositories
+
+Prohibit hardcoded credentials
+
+Monitor public GitHub repos linked to employees
+
+Implement insider-threat detection policies
+
+Audit endpoint usage for cryptomining behavior
+
+Enforce secure coding standards and peer review
+
+📈 Lessons Learned
+
+Public repositories are a high-risk attack surface
+
+OSINT is critical in insider-threat investigations
+
+Credential exposure often precedes larger incidents
+
+SOC analysts must correlate technical and behavioral data
+
+📂 Lab Classification
+
+Attack Type: Insider Threat / OSINT Abuse
+
+MITRE ATT&CK: Credential Access, Resource Hijacking
+
+SOC Skillset: Investigation, Attribution, Documentation
