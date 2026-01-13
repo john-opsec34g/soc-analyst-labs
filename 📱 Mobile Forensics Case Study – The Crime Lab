@@ -1,0 +1,161 @@
+📱 Mobile Forensics Case Study – The Crime Lab
+🔍 Case Overview
+
+This investigation focuses on the forensic analysis of an Android mobile device belonging to a homicide victim. Preliminary witness statements revealed financial distress, suspicious communications, and unexplained movements shortly before the incident.
+
+The objective of this analysis is to reconstruct the victim’s actions, relationships, and intentions by examining digital artifacts extracted from the device.
+
+Primary goals included:
+
+Identifying applications linked to financial activity
+
+Analyzing communications related to debt and threats
+
+Determining last known location and travel intent
+
+Correlating artifacts to establish a coherent timeline
+
+🛠️ Tools Used
+
+ALEAPP (Android Logs, Events, and Protobuf Parser)
+
+Android filesystem extraction
+
+Artifact correlation (SMS, Contacts, GPS, Chat logs)
+
+ALEAPP was used to parse Android artifacts including installed applications, SMS messages, contacts, recent activity logs, and Discord chat data.
+
+🧪 Analysis & Findings
+Q1: Trading Application Used by the Victim
+
+Objective:
+Identify the SHA-256 hash of the trading application primarily used by the victim.
+
+Methodology:
+Using ALEAPP, the installed applications artifact was analyzed. Android applications are uniquely identified by their package name and cryptographic hash.
+
+Findings:
+A trading application with the package name:
+
+com.ticno.olymptrade
+
+
+was identified as the primary trading platform used by the victim.
+
+SHA-256 Hash:
+
+4f168a772350f283a1c49e78c1548d7c2c6c05106d8b9feb825fdc3466e9df3c
+
+
+This confirms the application’s integrity and supports witness statements regarding the victim’s trading activities.
+
+Q2: Amount of Money Owed by the Victim
+
+Objective:
+Determine the amount of debt referenced by the caller the victim was avoiding.
+
+Methodology:
+SMS artifacts were extracted and reviewed using ALEAPP. Android SMS databases retain message content, sender details, and timestamps.
+
+Findings:
+An SMS message from +201172137258 contained a direct repayment demand:
+
+“Prepare the sum of 250,000 EGP… it won’t end well for you.”
+
+Conclusion:
+The victim owed 250,000 Egyptian Pounds (EGP).
+
+Q3: Identity of the Creditor
+
+Objective:
+Identify the individual to whom the victim owed money.
+
+Methodology:
+The contacts database was parsed and cross-referenced with the sender’s phone number from the SMS evidence.
+
+Findings:
+The phone number +201172137258 corresponds to the contact:
+
+Name: Shady Wahab
+
+Conclusion:
+The victim owed 250,000 EGP to Shady Wahab.
+
+Q4: Victim’s Location on September 20, 2023
+
+Objective:
+Determine where the victim was located when he left home without explanation.
+
+Methodology:
+Recent activity logs and Google Maps artifacts were examined using ALEAPP.
+
+Findings:
+
+Google Maps was active on September 20, 2023 at 23:50:29
+
+A snapshot showed a pinned location at:
+
+📍 The Nile Ritz-Carlton, Cairo
+
+Conclusion:
+The victim was located at or near The Nile Ritz-Carlton, Cairo at the time he left home.
+
+Q5: Intended Travel Destination
+
+Objective:
+Identify where the victim planned to travel after his hotel stay.
+
+Methodology:
+Discord chat logs were reviewed for travel-related communication.
+
+Findings:
+A Discord conversation with user “rob1ns0n” revealed:
+
+A flight booked for October 1, 2023 (09:00 AM)
+
+Reference to a meeting location: The Mob Museum
+
+External validation confirms The Mob Museum is located in:
+
+📍 Las Vegas, Nevada, USA
+
+Conclusion:
+The victim intended to travel to Las Vegas, Nevada.
+
+Q6: Planned Meeting Location
+
+Objective:
+Identify where the victim planned to meet his friend.
+
+Methodology:
+Discord message content was analyzed.
+
+Findings:
+The contact explicitly stated:
+
+“We’ll meet at The Mob Museum.”
+
+Conclusion:
+The planned meeting location was The Mob Museum, Las Vegas, Nevada.
+
+🧠 Key Takeaways
+
+Financial stress and debt played a significant role in the victim’s final days
+
+Mobile artifacts provided direct evidence of threats, movement, and intent
+
+Correlating SMS, Contacts, GPS, and Chat logs was essential to reconstructing events
+
+This case highlights the investigative power of mobile forensics in real-world scenarios
+
+📌 Skills Demonstrated
+
+Android forensic analysis
+
+Artifact correlation
+
+Timeline reconstruction
+
+ALEAPP usage
+
+Evidence-based reporting
