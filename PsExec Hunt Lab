@@ -1,0 +1,101 @@
+PsExec Hunt Lab 
+Introduction
+
+In this lab, we investigate a suspected network compromise triggered by an Intrusion Detection System (IDS) alert indicating suspicious lateral movement activity involving PsExec. PsExec is a legitimate Windows administrative tool that is frequently abused by attackers to execute commands remotely and move laterally across a network.
+
+Our objective as SOC analysts is to analyze the provided PCAP file to trace the attacker’s activities, identify the initial access point, determine how the attacker moved within the network, and understand the techniques used to compromise additional systems.
+
+The investigation primarily focuses on SMB (Server Message Block) traffic over TCP, as SMB is commonly leveraged for lateral movement in Windows environments. During the analysis, we observe SMB session negotiations, NTLM authentication, access to administrative shares such as ADMIN$ and IPC$, and the deployment of the PsExec service executable PSEXESVC.exe on a compromised host.
+
+As the investigation progresses, we identify the first compromised machine, extract the hostname and user account used for authentication, and trace both successful and failed lateral movement attempts. By correlating SMB session data and NTLM authentication artifacts, we reconstruct the attacker’s behavior and identify key Indicators of Compromise (IoCs).
+
+This lab highlights the importance of monitoring administrative shares, securing credentials, and detecting lateral movement techniques to improve network defense and incident response effectiveness.
+
+Analysis
+Q1: Identify the attacker’s initial access point
+
+What is the IP address of the machine from which the attacker initially gained access?
+
+To trace the attacker’s activities, we begin by analyzing the PCAP file in Wireshark using Statistics → Protocol Hierarchy. This reveals a significant volume of SMB traffic, which is commonly associated with Windows file sharing and remote administration.
+
+The protocol hierarchy confirms the presence of SMB2 over TCP, transported via NetBIOS Session Service on TCP port 445. This protocol combination is frequently observed during lateral movement activity.
+
+Upon inspecting SMB negotiation traffic, we observe a Negotiate Protocol Request originating from 10.0.0.130 and destined for 10.0.0.133. This request represents the initial step in establishing an SMB session, during which the client and server agree on the SMB protocol version.
+
+Based on this evidence, 10.0.0.130 is identified as the machine from which the attacker initiated activity within the network. The initiation of SMB communication from this host strongly indicates it served as the attacker’s initial foothold.
+
+Answer: 10.0.0.130
+
+Q2: Identify the first pivoted machine
+
+What is the hostname of the machine the attacker first pivoted to?
+
+To determine the first pivot target, we follow the SMB TCP stream established between 10.0.0.130 and 10.0.0.133. Within this stream, we analyze the SMB2 Session Setup process.
+
+The session setup reveals the use of NTLM authentication, a challenge-response mechanism commonly used in Windows networks and frequently abused during lateral movement.
+
+During the NTLM authentication exchange, the server responds with metadata that includes system identifiers such as the NetBIOS computer name and DNS hostname. From this information, the target system is identified as SALES-PC.
+
+This confirms that the attacker successfully pivoted from the initial host to SALES-PC, marking it as the first compromised system during lateral movement.
+
+Answer: SALES-PC
+
+Q3: Identify the compromised user account
+
+What username was used by the attacker for authentication?
+
+To identify the account used during authentication, we examine the SMB2 Session Setup Request packets within the same TCP stream.
+
+The NTLM authentication details contained in the packet reveal the username ssales. Additional metadata indicates that this account is associated with the host HR-PC.
+
+The use of the ssales account suggests that the attacker either compromised valid credentials or reused stolen authentication material to gain access. This represents a critical Indicator of Compromise, as it reveals which user account was abused and allows defenders to assess associated privileges and access scope.
+
+Answer: ssales
+
+Q4: Identify the deployed service executable
+
+What service executable did the attacker install on the target machine?
+
+Further analysis of SMB traffic reveals a Create Request issued by the attacker to deploy a service on the compromised host.
+
+The packet details show the creation of a file named PSEXESVC.exe. This executable is the service component of PsExec and is commonly copied to the target system to enable remote command execution.
+
+PsExec typically installs this service via administrative shares before executing commands remotely, confirming malicious lateral movement activity in this scenario.
+
+Answer: PSEXESVC.exe
+
+Q5: Identify the share used to install the service
+
+Which network share was used to install the PsExec service?
+
+The SMB2 Create Request responsible for deploying PSEXESVC.exe shows that the file was written to the ADMIN$ share.
+
+The ADMIN$ share is a hidden administrative share mapped to the Windows system directory (usually C:\Windows). It is frequently abused by attackers with elevated privileges to remotely deploy tools and services.
+
+This confirms that the attacker leveraged privileged access to copy and install the PsExec service on the target machine.
+
+Answer: ADMIN$
+
+Q6: Identify the communication share
+
+Which network share was used for communication between the two machines?
+
+To identify the communication channel used by PsExec, we examine the SMB Tree Connect Requests.
+
+The traffic shows a successful connection to the IPC$ share on the target machine. The IPC$ (Inter-Process Communication) share is used for remote procedure calls (RPC) and administrative communication rather than file storage.
+
+PsExec relies on IPC$ to manage remote execution and service control operations, making its use a strong indicator of lateral movement.
+
+Answer: IPC$
+
+Q7: Identify additional lateral movement attempts
+
+What is the hostname of the second machine the attacker attempted to pivot to?
+
+Finally, we search for additional SMB negotiation attempts originating from 10.0.0.130. The PCAP reveals another SMB session initiated toward 10.0.0.131.
+
+During the NTLM authentication exchange, metadata extracted from the server response identifies the target system as MARKETING-PC.
+
+However, this attempt results in a STATUS_LOGON_FAILURE, indicating that the attacker failed to authenticate and was unable to pivot further to this host.
+
+Answer: MARKETING-PC (failed pivot)
