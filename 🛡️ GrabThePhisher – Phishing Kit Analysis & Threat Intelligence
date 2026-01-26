@@ -1,0 +1,169 @@
+🛡️ GrabThePhisher – Phishing Kit Analysis & Threat Intelligence Write-Up
+📌 Overview
+
+This investigation analyzes a phishing kit designed to impersonate a decentralized exchange wallet service in order to steal cryptocurrency wallet seed phrases. The kit was hosted on a compromised server and leveraged both local logging and real-time Telegram exfiltration to capture sensitive victim data.
+
+The objective of this analysis was to:
+
+Identify the targeted wallet
+
+Understand the phishing kit structure
+
+Analyze data exfiltration methods
+
+Extract Indicators of Compromise (IoCs)
+
+Profile the threat actor’s operational behavior
+
+This write-up demonstrates practical phishing analysis, threat intelligence extraction, and attacker infrastructure investigation.
+
+🔍 Investigation Summary
+🎯 Targeted Wallet
+
+The phishing kit specifically targets MetaMask, a widely used Ethereum-compatible cryptocurrency wallet.
+
+Evidence supporting this includes:
+
+A dedicated metamask directory within the kit
+
+Web pages prompting users to enter their seed phrase
+
+Backend scripts referencing MetaMask recovery workflows
+
+The attacker’s goal was to trick victims into “restoring” their wallets, thereby capturing full wallet access credentials.
+
+🧪 Phishing Kit Structure
+📂 Key File Identified
+
+metamask.php
+
+This PHP script serves as the core backend component of the phishing kit and is responsible for:
+
+Processing form input
+
+Capturing wallet seed phrases
+
+Exfiltrating stolen credentials
+
+Logging victim activity
+
+💻 Programming Language
+
+PHP (Hypertext Preprocessor)
+
+PHP was used due to its server-side execution capabilities and ease of handling form submissions, logging, and API communication.
+
+🌍 Victim Information Collection
+
+The kit enriches stolen data by collecting victim geolocation details using the Sypex Geo API.
+
+Data retrieved includes:
+
+Country
+
+Region
+
+City (based on IP address)
+
+This information allows attackers to:
+
+Track victim distribution
+
+Improve targeting
+
+Correlate high-value victims geographically
+
+📤 Credential Exfiltration Methods
+
+The phishing kit uses two credential dumping mechanisms:
+
+1️⃣ Local Logging
+
+Stolen seed phrases are stored in log.txt
+
+Ensures persistence even if network exfiltration fails
+
+2️⃣ Telegram Bot Exfiltration
+
+Credentials are sent in real time using the Telegram Bot API
+
+Enables immediate attacker access
+
+Leverages a legitimate service to evade detection
+
+📊 Evidence of Compromise
+🧾 Collected Seed Phrases
+
+Total captured seed phrases: 3
+
+Stored within log.txt
+
+🕒 Most Recent Seed Phrase
+father also recycle embody balance concert mechanic believe owner pair muffin hockey
+
+🧩 Telegram Infrastructure Identified
+🔑 Bot Token
+5457463144:AAG8t4k7e2ew3tTi0IBShcWbSia0Irvxm10
+
+💬 Chat ID
+5442785564
+
+
+These values were hardcoded in the phishing script and used for automated credential delivery.
+
+🕵️ Threat Actor Attribution
+🧑‍💻 Developer Alias
+j1j1b1s@m3r0
+
+
+This alias appears embedded in the code and may represent:
+
+The phishing kit developer
+
+A collaborator or affiliate
+
+A handle used across underground communities
+
+Such identifiers are valuable for threat correlation and campaign tracking.
+
+🧠 Key Takeaways
+
+Legitimate platforms like Telegram can be abused for stealthy data exfiltration
+
+Phishing kits often include redundant data capture mechanisms
+
+Simple server-side scripts can enable high-impact financial theft
+
+Extracting IoCs enables defenders to improve detection and response
+
+🎯 Skills Demonstrated
+
+Phishing kit reverse analysis
+
+Threat intelligence extraction
+
+IoC identification
+
+Credential exfiltration analysis
+
+SOC-level investigative reporting
+
+📁 Repository Purpose
+
+This repository documents hands-on phishing investigations conducted as part of continuous cybersecurity skill development, focusing on blue team analysis, SOC operations, and real-world attacker techniques.
+
+🔥 Coach’s note (important)
+
+This is resume-ready, LinkedIn-ready, and recruiter-safe.
+
+If you want next, I can:
+
+Shorten this for LinkedIn
+
+Add screenshots + annotations
+
+Help you tag this repo correctly for recruiters
+
+Convert this into SOC interview talking points
+
+Just tell me what you want to optimize next.
